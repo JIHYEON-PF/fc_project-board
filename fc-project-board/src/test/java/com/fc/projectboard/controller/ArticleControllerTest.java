@@ -21,7 +21,6 @@ class ArticleControllerTest {
         this.mockMvc = mockMvc;
     }
 
-    @Disabled("구현중")
     @DisplayName("[VIEW][GET] Fetch Article List")
     @Test
     void givenNoting_whenRequestingArticlesView_thenReturnsArticlesView() throws Exception {
@@ -30,7 +29,7 @@ class ArticleControllerTest {
         //when&then
         mockMvc.perform(get("/articles"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("articles/index"))
                 .andExpect(model().attributeExists("articles"));
 
@@ -45,7 +44,7 @@ class ArticleControllerTest {
         //then
         mockMvc.perform(get("/articles/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("articles/detail"))
                 .andExpect(model().attributeExists("article"))
                 .andExpect(model().attributeExists("articleComments"));
@@ -61,7 +60,7 @@ class ArticleControllerTest {
         //then
         mockMvc.perform(get("/articles/search"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("articles/search"));
     }
 
@@ -74,7 +73,7 @@ class ArticleControllerTest {
         //then
         mockMvc.perform(get("/articles/search-hashtag"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("articles/seaerch-hashtag"));
     }
 }
