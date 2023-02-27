@@ -35,7 +35,6 @@ class ArticleControllerTest {
 
     }
 
-    @Disabled("구현중")
     @DisplayName("[VIEW][GET] Fetch Article Detail")
     @Test
     void givenNothing_whenRequestingArticleDetailView_thenReturnsArticleDetailView() throws Exception {
