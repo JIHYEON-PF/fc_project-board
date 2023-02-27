@@ -1126,3 +1126,9 @@ values (22, 'Nam tristique tortor eu pede.', 'McCahill', 'Goldthorp', '2022-07-0
        , (67, 'In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.', 'Emm', 'Rive', '2022-03-16', '2023-01-06')
        , (68, 'Integer tincidunt ante vel ipsum.', 'Spendley', 'Jewson', '2022-06-07', '2022-11-05')
        , (62, 'Aenean auctor gravida sem.', 'Goble', 'Dicker', '2022-06-20', '2022-04-10');
+
+
+-- 테스트 계정 추가
+-- TODO : 테스트용이지만 비밀번호가 노출된 데이터가 세팅됨, 개선 필요
+insert into user_account (user_id, user_password, nickname, email, memo, created_at, created_by, modified_at, modified_by)
+values ('fkaa', 'asdf1234', 'fkaa', 'wlgus120332@gmail.com', 'I am fkaa', now(), 'fkaa', now(), 'fkaa');
