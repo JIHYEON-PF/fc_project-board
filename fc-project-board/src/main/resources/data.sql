@@ -1,3 +1,8 @@
+-- 테스트 계정 추가
+-- TODO : 테스트용이지만 비밀번호가 노출된 데이터가 세팅됨, 개선 필요
+insert into user_account (user_id, user_password, nickname, email, memo, created_at, created_by, modified_at, modified_by)
+values ('fkaa', 'asdf1234', 'fkaa', 'wlgus120332@gmail.com', 'I am fkaa', now(), 'fkaa', now(), 'fkaa');
+
 -- 123개의 게시글 insert
 insert into article (user_account_id, title, content, hashtag, created_by, modified_by, created_at, modified_at)
 values (1, 'Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo.', 'Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.', 'Red', 'Marena', 'Keefe', '2022-04-13', '2022-10-04')
@@ -1126,9 +1131,3 @@ values (22, 1, 'Nam tristique tortor eu pede.', 'McCahill', 'Goldthorp', '2022-0
        , (67, 1, 'In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.', 'Emm', 'Rive', '2022-03-16', '2023-01-06')
        , (68, 1, 'Integer tincidunt ante vel ipsum.', 'Spendley', 'Jewson', '2022-06-07', '2022-11-05')
        , (62, 1, 'Aenean auctor gravida sem.', 'Goble', 'Dicker', '2022-06-20', '2022-04-10');
-
-
--- 테스트 계정 추가
--- TODO : 테스트용이지만 비밀번호가 노출된 데이터가 세팅됨, 개선 필요
-insert into user_account (user_id, user_password, nickname, email, memo, created_at, created_by, modified_at, modified_by)
-values ('fkaa', 'asdf1234', 'fkaa', 'wlgus120332@gmail.com', 'I am fkaa', now(), 'fkaa', now(), 'fkaa');
