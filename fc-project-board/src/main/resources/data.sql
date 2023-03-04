@@ -1,16 +1,17 @@
 -- 테스트 계정 추가
 -- TODO : 테스트용이지만 비밀번호가 노출된 데이터가 세팅됨, 개선 필요
 insert into user_account (user_id, user_password, nickname, email, memo, created_at, created_by, modified_at, modified_by)
-values ('fkaa', 'asdf1234', 'fkaa', 'wlgus120332@gmail.com', 'I am fkaa', now(), 'fkaa', now(), 'fkaa');
+values ('fkaa', 'asdf1234', 'fkaa', 'wlgus120332@gmail.com', 'I am fkaa', now(), 'fkaa', now(), 'fkaa'),
+       ('fkaa2', 'asdf12342', 'fkaa2', 'wlgus12033222@gmail.com', 'I am fkaa2', now(), 'fkaa2', now(), 'fkaa2');
 
 -- 123개의 게시글 insert
 insert into article (user_account_id, title, content, hashtag, created_by, modified_by, created_at, modified_at)
-values (1, 'Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo.', 'Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.', 'Red', 'Marena', 'Keefe', '2022-04-13', '2022-10-04')
-       , (1, 'Nulla justo.', 'In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.', 'Maroon', 'Garv', 'Caro', '2022-11-26', '2022-09-26')
-       , (1, 'Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl.', 'Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.', 'Mauv', 'Maribelle', 'Nadiya', '2022-08-24', '2022-06-08')
-       , (1, 'Nunc purus.', 'Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.', 'Puce', 'Drusilla', 'Andy', '2022-12-12', '2022-07-08')
-       , (1, 'Etiam justo.', 'Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.', 'Khaki', 'Hansiain', 'Etty', '2022-10-20', '2022-12-06')
-       , (1, 'Proin interdum mauris non ligula pellentesque ultrices.', 'Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.', 'Turquoise', 'Townie', 'Madella', '2022-03-16', '2023-02-17')
+values (2, 'Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo.', 'Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.', 'Red', 'Marena', 'Keefe', '2022-04-13', '2022-10-04')
+       , (2, 'Nulla justo.', 'In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.', 'Maroon', 'Garv', 'Caro', '2022-11-26', '2022-09-26')
+       , (2, 'Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl.', 'Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.', 'Mauv', 'Maribelle', 'Nadiya', '2022-08-24', '2022-06-08')
+       , (2, 'Nunc purus.', 'Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.', 'Puce', 'Drusilla', 'Andy', '2022-12-12', '2022-07-08')
+       , (2, 'Etiam justo.', 'Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.', 'Khaki', 'Hansiain', 'Etty', '2022-10-20', '2022-12-06')
+       , (2, 'Proin interdum mauris non ligula pellentesque ultrices.', 'Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.', 'Turquoise', 'Townie', 'Madella', '2022-03-16', '2023-02-17')
        , (1, 'Aliquam sit amet diam in magna bibendum imperdiet.', 'Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.', 'Indigo', 'Lissi', 'Calla', '2022-04-22', '2022-05-18')
        , (1, 'Pellentesque viverra pede ac diam.', 'Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.', 'Crimson', 'Jo', 'Hilda', '2022-11-12', '2022-10-17')
        , (1, 'Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc.', 'In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.', 'Indigo', 'Holmes', 'Madelin', '2022-06-23', '2023-01-07')
