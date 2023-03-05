@@ -50,10 +50,10 @@ class JpaRepositoryTest {
 
     @DisplayName("INSERT TEST")
     @Test
-    void givenTestData_whenInserting_thenWorkdine() throws Exception {
+    void givenTestData_whenInserting_thenWorkfine() throws Exception {
         //given
         long previousCount = articleRepository.count();
-        UserAccount userAccount = userAccountRepository.save(UserAccount.of("fkaa", "pw", null, null, null));
+        UserAccount userAccount = userAccountRepository.save(UserAccount.of("newFkaa", "pw", null, null, null));
         Article article = Article.of(userAccount, "new article", "new content", "#spring");
 
         //when
