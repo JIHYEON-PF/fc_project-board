@@ -1,6 +1,7 @@
 package com.fc.projectboard.controller;
 
 import com.fc.projectboard.config.SecurityConfig;
+import com.fc.projectboard.domain.type.SearchType;
 import com.fc.projectboard.dto.ArticleWithCommentsDto;
 import com.fc.projectboard.dto.UserAccountDto;
 import com.fc.projectboard.service.ArticleService;
@@ -61,6 +62,32 @@ class ArticleControllerTest {
                 .andExpect(model().attributeExists("paginationBarNumbers"));
         
         then(articleService).should().searchArticles(eq(null), eq(null), any(Pageable.class));
+        then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
+    }
+
+    @DisplayName("[VIEW][GET] Fetch Article List by Search Keyword")
+    @Test
+    void givenSearchKeyword_whenSearchingArticlesView_thenReturnsArticlesView() throws Exception {
+        //given
+        SearchType searchType = SearchType.TITLE;
+        String searchValue = "title";
+
+        given(articleService.searchArticles(eq(searchType), eq(searchValue), any(Pageable.class)))
+                .willReturn(Page.empty());
+        given(paginationService.getPaginationBarNumbers(anyInt(), anyInt()))
+                .willReturn(List.of(0, 1, 2, 3, 4));
+
+        //when&then
+        mockMvc.perform(get("/articles")
+                        .queryParam("searchType", searchType.name())
+                        .queryParam("searchValue", searchValue))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/index"))
+                .andExpect(model().attributeExists("articles"))
+                .andExpect(model().attributeExists("searchTypes"));
+
+        then(articleService).should().searchArticles(eq(searchType), eq(searchValue), any(Pageable.class));
         then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
