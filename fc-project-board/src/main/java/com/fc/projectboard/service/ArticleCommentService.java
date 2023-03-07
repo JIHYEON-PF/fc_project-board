@@ -1,9 +1,12 @@
 package com.fc.projectboard.service;
 
+import com.fc.projectboard.domain.Article;
 import com.fc.projectboard.domain.ArticleComment;
+import com.fc.projectboard.domain.UserAccount;
 import com.fc.projectboard.dto.ArticleCommentDto;
 import com.fc.projectboard.repository.ArticleCommentRepository;
 import com.fc.projectboard.repository.ArticleRepository;
+import com.fc.projectboard.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,16 +14,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class ArticleCommentService {
+    private final UserAccountRepository userAccountRepository;
 
-    private ArticleRepository articleRepository;
-    private ArticleCommentRepository articleCommentRepository;
+    private final ArticleRepository articleRepository;
+    private final ArticleCommentRepository articleCommentRepository;
 
     @Transactional(readOnly = true)
     public List<ArticleCommentDto> searchArticleComments(Long articleId) {
@@ -31,9 +34,11 @@ public class ArticleCommentService {
 
     public void saveArticleComment(ArticleCommentDto dto) {
         try {
-            articleCommentRepository.save(dto.toEntity(articleRepository.getReferenceById(dto.articleId())));
+            Article article = articleRepository.getReferenceById(dto.articleId());
+            UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
+            articleCommentRepository.save(dto.toEntity(article, userAccount));
         } catch (EntityNotFoundException e) {
-            log.warn("Save comment is failed, Cannot find article - dto : {}", dto);
+            log.warn("Save comment is failed, Cannot find article or writer - dto : {}", e.getMessage());
         }
     }
 
