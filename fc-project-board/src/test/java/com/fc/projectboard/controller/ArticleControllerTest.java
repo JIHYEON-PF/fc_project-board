@@ -224,7 +224,7 @@ class ArticleControllerTest {
 
         //when
         mockMvc.perform(
-                post("/articlces/" + articleId + "/form")
+                post("/articles/" + articleId + "/form")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .content(formDataEncoder.encode(articleRequest))
                         .with(csrf()))
