@@ -1,11 +1,16 @@
 package com.fc.projectboard.controller;
 
 import com.fc.projectboard.config.SecurityConfig;
-import com.fc.projectboard.domain.type.SearchType;
+import com.fc.projectboard.domain.constant.FormStatus;
+import com.fc.projectboard.domain.constant.SearchType;
+import com.fc.projectboard.dto.ArticleDto;
 import com.fc.projectboard.dto.ArticleWithCommentsDto;
 import com.fc.projectboard.dto.UserAccountDto;
+import com.fc.projectboard.dto.request.ArticleRequest;
+import com.fc.projectboard.dto.response.ArticleResponse;
 import com.fc.projectboard.service.ArticleService;
 import com.fc.projectboard.service.PaginationService;
+import com.fc.projectboard.utility.FormDataEncoder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,28 +30,31 @@ import java.util.List;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("View Controller Test - Article")
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, FormDataEncoder.class})
 @WebMvcTest(ArticleController.class)
 class ArticleControllerTest {
 
     private final MockMvc mockMvc;
+    private final FormDataEncoder formDataEncoder;
 
     @MockBean private ArticleService articleService;
     @MockBean private PaginationService paginationService;
 
-    public ArticleControllerTest(@Autowired MockMvc mockMvc) {
+    public ArticleControllerTest(@Autowired MockMvc mockMvc, @Autowired FormDataEncoder formDataEncoder) {
         this.mockMvc = mockMvc;
+        this.formDataEncoder = formDataEncoder;
     }
 
     @DisplayName("[VIEW][GET] Fetch Article List")
     @Test
-    void givenNoting_whenRequestingArticlesView_thenReturnsArticlesView() throws Exception {
+    void givenNothing_whenRequestingArticlesView_thenReturnsArticlesView() throws Exception {
         //given
         given(articleService.searchArticles(eq(null), eq(null), any(Pageable.class)))
                 .willReturn(Page.empty());
@@ -132,7 +140,7 @@ class ArticleControllerTest {
         Long articleId = 1L;
         Long totalCount = 1L;
 
-        given(articleService.getArticle(articleId)).willReturn(createArticleWithCommentsDto());
+        given(articleService.getArticleWithComments(articleId)).willReturn(createArticleWithCommentsDto());
         given(articleService.getArticleCount()).willReturn(totalCount);
 
         //then
@@ -144,8 +152,108 @@ class ArticleControllerTest {
                 .andExpect(model().attributeExists("articleComments"))
                 .andExpect(model().attribute("totalCount", totalCount));
 
-        then(articleService).should().getArticle(articleId);
+        then(articleService).should().getArticleWithComments(articleId);
         then(articleService).should().getArticleCount();
+    }
+
+    @DisplayName("[VIEW][GET] FETCH Article Write View")
+    @Test
+    void givenNothing_whenRequesting_thenReturnsNewArticlePage() throws Exception {
+        //given
+
+        //when & then
+        mockMvc.perform(
+                get("/articles/form"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/form"))
+                .andExpect(model().attribute("formStatus", FormStatus.CREATE));
+    }
+
+    @DisplayName("[VIEW][POST] POST New Article")
+    @Test
+    void given_when_then() throws Exception {
+        //given
+        ArticleRequest request = ArticleRequest.of("new title", "new contnet", "#new");
+
+        willDoNothing().given(articleService).saveArticle(any(ArticleDto.class));
+
+        //when
+        mockMvc.perform(
+                post("/articles/form")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .content(formDataEncoder.encode(request))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/articles"))
+                .andExpect(redirectedUrl("/articles"));
+
+        //then
+        then(articleService).should().saveArticle(any(ArticleDto.class));
+    }
+
+    @DisplayName("[VIEW][GET] FETCH Article Update View")
+    @Test
+    void givenArticleId_whenRequestingUpdateView_thenReturnsUpdateArticlePage() throws Exception {
+        //given
+        long articleId = 1L;
+        ArticleDto dto = createArticleDto();
+        given(articleService.getArticle(articleId)).willReturn(dto);
+
+        //when
+        mockMvc.perform(
+                get("/articles/" + articleId + "/form"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/form"))
+                .andExpect(model().attribute("article", ArticleResponse.from(dto)))
+                .andExpect(model().attribute("formStatus", FormStatus.UPDATE));
+
+        //then
+        then(articleService).should().getArticle(articleId);
+    }
+
+    @DisplayName("[VIEW][POST] Update Article")
+    @Test
+    void givenUpdateArticleInfo_whenRequestUpdateArticle_thenUpdatesNewArticle() throws Exception {
+        //given
+        long articleId = 1L;
+        ArticleRequest articleRequest = ArticleRequest.of("new title", "new contnet", "#new");
+
+        willDoNothing().given(articleService).updateArticle(eq(articleId), any(ArticleDto.class));
+
+        //when
+        mockMvc.perform(
+                post("/articlces/" + articleId + "/form")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .content(formDataEncoder.encode(articleRequest))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/articles/" + articleId))
+                .andExpect(redirectedUrl("/articles/" + articleId));
+
+        //then
+        then(articleService).should().updateArticle(eq(articleId), any(ArticleDto.class));
+    }
+
+    @DisplayName("[VIEW][GET] DELETE Article")
+    @Test
+    void givenArticleIdToDelete_whenRequestingDeleteArticle_thenDeletesArticle() throws Exception {
+        //given
+        long articleId = 1L;
+        willDoNothing().given(articleService).deleteArticle(articleId);
+
+        //when
+        mockMvc.perform(
+                post("/articles/" + articleId + "/delete")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/articles"))
+                .andExpect(redirectedUrl("/articles"));
+
+        //then
+        then(articleService).should().deleteArticle(articleId);
     }
 
     @Disabled
@@ -239,6 +347,15 @@ class ArticleControllerTest {
                 "fkaa",
                 LocalDateTime.now(),
                 "fkaa"
+        );
+    }
+
+    private ArticleDto createArticleDto() {
+        return ArticleDto.of(
+                createUserAccountDto(),
+                "title",
+                "content",
+                "#java"
         );
     }
 }
