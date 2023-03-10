@@ -65,18 +65,23 @@ public class ArticleService {
     public void updateArticle(Long articleId, ArticleDto dto) {
         try {
             Article article = articleRepository.getReferenceById(articleId);
-            if (StringUtils.isNotEmpty(dto.title()))
-                article.setTitle(dto.title());
-            if (StringUtils.isNotEmpty(dto.content()))
-                article.setContent(dto.content());
+            UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
+
+            if (article.getUserAccount().equals(userAccount)) {
+                if (StringUtils.isNotEmpty(dto.title()))
+                    article.setTitle(dto.title());
+                if (StringUtils.isNotEmpty(dto.content()))
+                    article.setContent(dto.content());
+            }
+
             article.setHashtag(dto.hashtag());
         } catch (EntityNotFoundException e) {
-            log.warn("Article update was failed by article is not found - dto: {}", dto);
+            log.warn("Article update was failed by article is not found or user is not matches - {}", e.getLocalizedMessage());
         }
     }
 
-    public void deleteArticle(long articleId) {
-        articleRepository.deleteById(articleId);
+    public void deleteArticle(long articleId, String userId) {
+        articleRepository.deleteByIdAndUserAccount_UserId(articleId, userId);
     }
 
     public long getArticleCount() {
