@@ -1,6 +1,6 @@
 package com.fc.projectboard.controller;
 
-import com.fc.projectboard.config.SecurityConfig;
+import com.fc.projectboard.config.TestSecurityConfig;
 import com.fc.projectboard.domain.constant.FormStatus;
 import com.fc.projectboard.domain.constant.SearchType;
 import com.fc.projectboard.dto.ArticleDto;
@@ -11,7 +11,6 @@ import com.fc.projectboard.dto.response.ArticleResponse;
 import com.fc.projectboard.service.ArticleService;
 import com.fc.projectboard.service.PaginationService;
 import com.fc.projectboard.utility.FormDataEncoder;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.TestExecutionEvent;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -37,7 +39,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("View Controller Test - Article")
-@Import({SecurityConfig.class, FormDataEncoder.class})
+@Import({TestSecurityConfig.class, FormDataEncoder.class})
 @WebMvcTest(ArticleController.class)
 class ArticleControllerTest {
 
@@ -133,7 +135,23 @@ class ArticleControllerTest {
 
     }
 
-    @DisplayName("[VIEW][GET] Fetch Article Detail")
+    @DisplayName("[VIEW][GET] Fetch Article Detail By Anonymous")
+    @Test
+    void givenNothing_whenRequestingArticleDetailViewByAnonymous_thenRedirectsToLoginPage() throws Exception {
+        //given
+        long articleId = 1L;
+
+        //when & then
+        mockMvc.perform(
+                get(String.format("/articles/%d", articleId)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
+
+        then(articleService).shouldHaveNoInteractions();
+    }
+
+    @WithMockUser
+    @DisplayName("[VIEW][GET] Fetch Article Detail by Authenticated user")
     @Test
     void givenNothing_whenRequestingArticleDetailView_thenReturnsArticleDetailView() throws Exception {
         //given&when
@@ -156,6 +174,7 @@ class ArticleControllerTest {
         then(articleService).should().getArticleCount();
     }
 
+    @WithMockUser
     @DisplayName("[VIEW][GET] FETCH Article Write View")
     @Test
     void givenNothing_whenRequesting_thenReturnsNewArticlePage() throws Exception {
@@ -170,6 +189,7 @@ class ArticleControllerTest {
                 .andExpect(model().attribute("formStatus", FormStatus.CREATE));
     }
 
+    @WithUserDetails(value = "fkaaTest", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("[VIEW][POST] POST New Article")
     @Test
     void given_when_then() throws Exception {
@@ -192,6 +212,7 @@ class ArticleControllerTest {
         then(articleService).should().saveArticle(any(ArticleDto.class));
     }
 
+    @WithMockUser
     @DisplayName("[VIEW][GET] FETCH Article Update View")
     @Test
     void givenArticleId_whenRequestingUpdateView_thenReturnsUpdateArticlePage() throws Exception {
@@ -213,6 +234,7 @@ class ArticleControllerTest {
         then(articleService).should().getArticle(articleId);
     }
 
+    @WithUserDetails(value = "fkaaTest", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("[VIEW][POST] Update Article")
     @Test
     void givenUpdateArticleInfo_whenRequestUpdateArticle_thenUpdatesNewArticle() throws Exception {
@@ -236,12 +258,14 @@ class ArticleControllerTest {
         then(articleService).should().updateArticle(eq(articleId), any(ArticleDto.class));
     }
 
+    @WithUserDetails(value = "fkaaTest", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("[VIEW][GET] DELETE Article")
     @Test
     void givenArticleIdToDelete_whenRequestingDeleteArticle_thenDeletesArticle() throws Exception {
         //given
         long articleId = 1L;
-        willDoNothing().given(articleService).deleteArticle(articleId);
+        String userId = "fkaaTest";
+        willDoNothing().given(articleService).deleteArticle(articleId, userId);
 
         //when
         mockMvc.perform(
@@ -253,20 +277,7 @@ class ArticleControllerTest {
                 .andExpect(redirectedUrl("/articles"));
 
         //then
-        then(articleService).should().deleteArticle(articleId);
-    }
-
-    @Disabled
-    @DisplayName("[VIEW][GET] Fetch Article Search View ")
-    @Test
-    void givenNothing_whenRequestingArticleSearchView_thenReturnsArticleSearchView() throws Exception {
-        //given&when
-
-        //then
-        mockMvc.perform(get("/articles/search"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-                .andExpect(view().name("articles/search"));
+        then(articleService).should().deleteArticle(articleId, userId);
     }
 
     @DisplayName("[VIEW][GET] Fetch Hashtag Search View Via Hashtag")
