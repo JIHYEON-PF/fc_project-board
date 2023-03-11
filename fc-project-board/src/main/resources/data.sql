@@ -1,8 +1,8 @@
 -- 테스트 계정 추가
 -- TODO : 테스트용이지만 비밀번호가 노출된 데이터가 세팅됨, 개선 필요
 insert into user_account (user_id, user_password, nickname, email, memo, created_at, created_by, modified_at, modified_by)
-values ('fkaa', 'asdf1234', 'fkaa', 'wlgus120332@gmail.com', 'I am fkaa', now(), 'fkaa', now(), 'fkaa'),
-       ('fkaa2', 'asdf12342', 'fkaa2', 'wlgus12033222@gmail.com', 'I am fkaa2', now(), 'fkaa2', now(), 'fkaa2');
+values ('fkaa', '{noop}asdf1234', 'fkaa', 'wlgus120332@gmail.com', 'I am fkaa', now(), 'fkaa', now(), 'fkaa'),
+       ('fkaa2', '{noop}asdf12342', 'fkaa2', 'wlgus12033222@gmail.com', 'I am fkaa2', now(), 'fkaa2', now(), 'fkaa2');
 
 -- 123개의 게시글 insert
 insert into article (user_id, title, content, hashtag, created_by, modified_by, created_at, modified_at)
