@@ -2,6 +2,7 @@ package com.fc.projectboard.service;
 
 import com.fc.projectboard.domain.Article;
 import com.fc.projectboard.domain.ArticleComment;
+import com.fc.projectboard.domain.Hashtag;
 import com.fc.projectboard.domain.UserAccount;
 import com.fc.projectboard.dto.ArticleCommentDto;
 import com.fc.projectboard.dto.UserAccountDto;
@@ -18,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,37 +35,37 @@ class ArticleCommentServiceTest {
     @Mock private ArticleCommentRepository articleCommentRepository;
     @Mock private UserAccountRepository userAccountRepository;
 
-    @DisplayName("게시글 아이디를 통한 게시글 댓글 조회")
+    @DisplayName("게시글 ID로 조회하면, 해당하는 댓글 리스트를 반환한다.")
     @Test
-    void givenArticleId_whenSearchingArticleComments_thenReturnsArticleComments() throws Exception {
-        //given
+    void givenArticleId_whenSearchingArticleComments_thenReturnsArticleComments() {
+        // Given
         Long articleId = 1L;
         ArticleComment expected = createArticleComment("content");
         given(articleCommentRepository.findByArticle_Id(articleId)).willReturn(List.of(expected));
 
-        //when
+        // When
         List<ArticleCommentDto> actual = sut.searchArticleComments(articleId);
 
-        //then
+        // Then
         assertThat(actual)
                 .hasSize(1)
                 .first().hasFieldOrPropertyWithValue("content", expected.getContent());
         then(articleCommentRepository).should().findByArticle_Id(articleId);
     }
 
-    @DisplayName("댓글 정보를 입력하면, 댓글을 저장")
+    @DisplayName("댓글 정보를 입력하면, 댓글을 저장한다.")
     @Test
-    void given_whenSearchingArticleComments_thenReturnsArticleComments() throws Exception {
-        //given
+    void givenArticleCommentInfo_whenSavingArticleComment_thenSavesArticleComment() {
+        // Given
         ArticleCommentDto dto = createArticleCommentDto("댓글");
         given(articleRepository.getReferenceById(dto.articleId())).willReturn(createArticle());
         given(userAccountRepository.getReferenceById(dto.userAccountDto().userId())).willReturn(createUserAccount());
         given(articleCommentRepository.save(any(ArticleComment.class))).willReturn(null);
 
-        //when
+        // When
         sut.saveArticleComment(dto);
 
-        //then
+        // Then
         then(articleRepository).should().getReferenceById(dto.articleId());
         then(userAccountRepository).should().getReferenceById(dto.userAccountDto().userId());
         then(articleCommentRepository).should().save(any(ArticleComment.class));
@@ -165,7 +166,7 @@ class ArticleCommentServiceTest {
 
     private ArticleComment createArticleComment(String content) {
         return ArticleComment.of(
-                Article.of(createUserAccount(), "title", "content", "hashtag"),
+                createArticle(),
                 createUserAccount(),
                 content
         );
@@ -182,11 +183,18 @@ class ArticleCommentServiceTest {
     }
 
     private Article createArticle() {
-        return Article.of(
+        Article article = Article.of(
                 createUserAccount(),
                 "title",
-                "content",
-                "#java"
+                "content"
         );
+        article.addHashtags(Set.of(createHashtag(article)));
+
+        return article;
     }
+
+    private Hashtag createHashtag(Article article) {
+        return Hashtag.of("java");
+    }
+
 }
