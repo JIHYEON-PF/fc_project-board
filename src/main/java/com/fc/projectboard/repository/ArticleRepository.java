@@ -15,24 +15,25 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource
 public interface ArticleRepository extends
-        JpaRepository<Article, Long>
-        , ArticleRepositoryCustom
-        , QuerydslPredicateExecutor<Article>
-        , QuerydslBinderCustomizer<QArticle> {
+        JpaRepository<Article, Long>,
+        ArticleRepositoryCustom,
+        QuerydslPredicateExecutor<Article>,
+        QuerydslBinderCustomizer<QArticle> {
 
     Page<Article> findByTitleContaining(String title, Pageable pageable);
     Page<Article> findByContentContaining(String content, Pageable pageable);
     Page<Article> findByUserAccount_UserIdContaining(String userId, Pageable pageable);
     Page<Article> findByUserAccount_NicknameContaining(String nickname, Pageable pageable);
 
-    void deleteByIdAndUserAccount_UserId(Long articleId, String userId);
+    void deleteByIdAndUserAccount_UserId(Long articleId, String userid);
 
     @Override
     default void customize(QuerydslBindings bindings, QArticle root) {
-        bindings.excludeUnlistedProperties(true); // 필터링 리스트 초기화
-        bindings.including(root.title, root.content, root.createdAt, root.createdBy); //필터링 리스트 셋업
-        bindings.bind(root.title).first(StringExpression::containsIgnoreCase); // search param은 first(하나) / StringExpression으로 대소문자 구분 없이 조회(like 검색)
+        bindings.excludeUnlistedProperties(true);
+        bindings.including(root.title, root.content, root.hashtags, root.createdAt, root.createdBy);
+        bindings.bind(root.title).first(StringExpression::containsIgnoreCase);
         bindings.bind(root.content).first(StringExpression::containsIgnoreCase);
+        bindings.bind(root.hashtags.any().hashtagName).first(StringExpression::containsIgnoreCase);
         bindings.bind(root.createdAt).first(DateTimeExpression::eq);
         bindings.bind(root.createdBy).first(StringExpression::containsIgnoreCase);
     }
