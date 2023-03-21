@@ -12,7 +12,6 @@ import com.fc.projectboard.dto.response.ArticleResponse;
 import com.fc.projectboard.service.ArticleService;
 import com.fc.projectboard.service.PaginationService;
 import com.fc.projectboard.utility.FormDataEncoder;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
