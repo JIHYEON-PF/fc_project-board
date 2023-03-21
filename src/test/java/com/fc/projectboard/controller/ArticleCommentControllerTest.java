@@ -1,6 +1,5 @@
 package com.fc.projectboard.controller;
 
-import com.fc.projectboard.config.SecurityConfig;
 import com.fc.projectboard.config.TestSecurityConfig;
 import com.fc.projectboard.dto.ArticleCommentDto;
 import com.fc.projectboard.dto.request.ArticleCommentRequest;
@@ -19,12 +18,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -85,5 +82,25 @@ class ArticleCommentControllerTest {
                 .andExpect(view().name("redirect:/articles/" + articleId))
                 .andExpect(redirectedUrl("/articles/" + articleId));
         then(articleCommentService).should().deleteArticleComment(articleCommentId, userId);
+    }
+
+    @WithUserDetails(value = "fkaaTest", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("[view][POST] 대댓글 등록 - 정상호출")
+    @Test
+    void givenArticleCommentInfoWithParentCommitId_whenrequesting_thenSavesNewChildComment() throws Exception {
+        //given
+        long articleId = 1L;
+        ArticleCommentRequest request = ArticleCommentRequest.of(articleId, 1L, "test comment");
+
+        //when & then
+        mvc.perform(
+                post("/comments/new")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .content(formDataEncoder.encode(request))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/articles/" + articleId));
+
+        then(articleCommentService).should().saveArticleComment(any(ArticleCommentDto.class));
     }
 }

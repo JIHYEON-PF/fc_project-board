@@ -36,7 +36,15 @@ public class ArticleCommentService {
         try {
             Article article = articleRepository.getReferenceById(dto.articleId());
             UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
-            articleCommentRepository.save(dto.toEntity(article, userAccount));
+            ArticleComment articleComment = dto.toEntity(article, userAccount);
+
+            if (dto.parentCommentId() != null) {
+                ArticleComment parentComment = articleCommentRepository.getReferenceById(dto.parentCommentId());
+                parentComment.addChildComment(articleComment);
+            } else {
+                articleCommentRepository.save(articleComment);
+            }
+
         } catch (EntityNotFoundException e) {
             log.warn("Save comment is failed, Cannot find article or writer - dto : {}", e.getMessage());
         }

@@ -2,7 +2,6 @@ package com.fc.projectboard.controller;
 
 import com.fc.projectboard.domain.constant.FormStatus;
 import com.fc.projectboard.domain.constant.SearchType;
-import com.fc.projectboard.dto.UserAccountDto;
 import com.fc.projectboard.dto.request.ArticleRequest;
 import com.fc.projectboard.dto.response.ArticleResponse;
 import com.fc.projectboard.dto.response.ArticleWithCommentsResponse;

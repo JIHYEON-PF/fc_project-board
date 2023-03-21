@@ -1,7 +1,6 @@
 package com.fc.projectboard.dto;
 
 import com.fc.projectboard.domain.Article;
-import com.fc.projectboard.domain.Hashtag;
 import com.fc.projectboard.domain.UserAccount;
 
 import java.time.LocalDateTime;
