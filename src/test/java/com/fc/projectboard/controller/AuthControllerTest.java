@@ -1,6 +1,5 @@
 package com.fc.projectboard.controller;
 
-import com.fc.projectboard.config.SecurityConfig;
 import com.fc.projectboard.config.TestSecurityConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

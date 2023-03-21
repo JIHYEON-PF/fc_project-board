@@ -1,6 +1,5 @@
 package com.fc.projectboard.controller;
 
-import com.fc.projectboard.dto.UserAccountDto;
 import com.fc.projectboard.dto.request.ArticleCommentRequest;
 import com.fc.projectboard.dto.security.BoardPrincipal;
 import com.fc.projectboard.service.ArticleCommentService;

@@ -5,7 +5,6 @@ import com.fc.projectboard.domain.ArticleComment;
 import com.fc.projectboard.domain.Hashtag;
 import com.fc.projectboard.domain.UserAccount;
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.assertj.core.api.InstanceOfAssertFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
